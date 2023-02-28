@@ -1,5 +1,6 @@
 <!-- Import the component -->
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<!--<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>-->
+<script type="module" src="https://modelviewer.dev/node_modules/@google/model-viewer/dist/model-viewer.min.js"></script>
 
 <!-- Use model viewer -->
 <body style="background-color:black;" text="#ffffff">
@@ -36,13 +37,73 @@
     line-height: 50px;
     font-family: SeatTypo;
   }
+   .slider {
+    width: 100%;
+    text-align: center;
+    overflow: hidden;
+    position: absolute;
+    bottom: 116px;
+    left: 20;
+  }
+
+  .slides {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .slide {
+    flex-shrink: 0;
+    width: 150px;
+    height: 150px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #fff;
+    margin-right: 10px;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+  }
+  .slide.selected {
+    border: 5px solid #4285f4;
+  }
 </style>
 
 
-<model-viewer style="width: 100%; height: 97%;" src="Bertha.glb" ios-src="Bertha.usdz" ar autoplay ar-modes="scene-viewer webxr quick-look" camera-controls poster="Bertha_poster.webp" shadow-intensity="1.14" environment-image="skylit_garage_1k_test.hdr" skybox-image="skylit_garage_1k_test.hdr" shadow-softness="0.78" auto-rotate> 
+<model-viewer style="width: 100%; height: 100%;" src="Bertha.glb" ios-src="Bertha.usdz" ar autoplay ar-modes="scene-viewer webxr quick-look" camera-controls poster="Bertha_poster.webp" shadow-intensity="1.14" environment-image="skylit_garage_1k_test.hdr" skybox-image="skylit_garage_1k_test.hdr" shadow-softness="0.78" auto-rotate> 
     <button  slot="ar-button"class="arbutton" id="ar-button">
         Press here to activate AR
     </button>
     <div class="annotation">-Tap the bottom button to activate AR <br>&emsp;-Tap and move to translate the model. <br>&emsp;-Tap with two fingers to rotate the model. <br>&emsp;-Pinch in the model to zoom </div>
+     <div class="slider">
+    <div class="slides">
+      <button class="slide selected" onclick="switchSrc(this, 'Bertha')" style="background-image: url('Bertha_poster.webp');">
+
+      </button><button class="slide" onclick="switchSrc(this, 'Bertha_NoText')" style="background-image: url('Bertha_NoText_poster.webp');"> 
+    </button></div>
+  </div>
+
 </model-viewer>
+
+<script type="module">
+  const modelViewer = document.querySelector("model-viewer");
+
+  window.switchSrc = (element, name) => {
+    const base = name;
+    modelViewer.src = base + '.glb';
+    modelViewer.iosSrc = base + '.usdz';
+    modelViewer.poster = base + '.webp';
+    const slides = document.querySelectorAll(".slide");
+    slides.forEach((element) => {element.classList.remove("selected");});
+    element.classList.add("selected");
+  };
+
+  document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
+    // Keep slider interactions from affecting the XR scene.
+    ev.preventDefault();
+  });
+</script>
+
 </body>
